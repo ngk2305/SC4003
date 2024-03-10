@@ -65,7 +65,7 @@ state_value = [[0]*6 for i in range(6)]
 policy_table = [[[0,1] for k in range(6)] for j in range(6)]
 
 #accuracy threshold variable
-THETA = 0.001
+THETA = 0.01
 
 #Discount factor
 GAMMA = 0.99
@@ -88,9 +88,10 @@ while not policy_stable_flag:
                 old_v = get_value([row,column],state_value)
 
                 #update state_value
-                new_pos = get_destination([row,column],policy_table[row][column],map)
-                state_value[row][column] = get_reward(new_pos,map) + get_value(new_pos,state_value)*GAMMA
-                ERROR = max(ERROR,abs(old_v-state_value[row][column]))
+
+                state_value[row][column] = value_of_action([row,column],policy_table[row][column],map)
+
+                ERROR = max(ERROR,abs(old_v - state_value[row][column]))
 
     #policy improvement
     policy_stable_flag = True
@@ -100,7 +101,7 @@ while not policy_stable_flag:
             max_value= float('-inf')
             for a in action:
                 a_value = value_of_action([row,column],a,map)
-                if a_value > max_value:
+                if a_value >= max_value:
                     max_value = a_value
                     new_action = a
             policy_table[row][column] = new_action
